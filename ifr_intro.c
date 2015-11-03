@@ -645,7 +645,7 @@ void show_intro(void)
   ScrollImage = text_to_bitmap(FT_VAR, ScrollerText, &ScrollImageWidth, &ScrollImageHeight);
   ScrollScrWidth = ScrollChunks[ScrollChunkCount-1].screen_x +
 			 							 ScrollChunks[ScrollChunkCount-1].screen_width;
-  ScrollPixHei = 62/FontHeight[FT_VAR];
+  ScrollPixHei = 62/16;///FontHeight[FT_VAR];
   ScrollHei = ScrollPixHei * ScrollImageHeight + ScrollPixHei/2+ 7;
   ScrollScrY = ScrollY-ScrollPixHei/2-2;
 
