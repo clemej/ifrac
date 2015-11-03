@@ -1,0 +1,166 @@
+==================================================================
+This is a mere preamble. For a more specific information
+regarding the game, consult:
+
+	INSTALL - installation instructions
+	LICENSE - as the name suggests 
+	ifrac.6 - game manual ('man ./ifrac.6', or just 'man ifrac'
+                         after installation)
+==================================================================
+The following text was written as a forward to the very first 
+release of IFRAC. I decided to keep it intact, and only put
+comments to keep it up to date.
+
+CONTENT
+=======
+The (i)FRAC story.
+My other creatures
+Drop me a message...
+
+
+The (i)FRAC story
+==================
+  FRAC was originally implemented  in 1990 by  Max Shapiro(*)  and
+Per Bergland, who  also  called   themselves 'Simsalabim Software'
+after (as far as I imagine)  a  magic spell used in Persian  fairy
+tales. Other 'Simsalabim' products (for DOS and Mac)are 4D FRAC (!),
+a hextris clone called BEETRIS(**) and a logic game INTUITION. I am
+going to put shareware versions  of FRAC and BEETRIS to IFRAC site.
+
+  Though I never met the guys(***), my wierd imagination creates a 
+distinct vision of two recent migrants, who spent all their savings
+on  a  fast and expensive 286 (386?) computer with  a VGA card, and
+Turbo-Pascal in anticipation of splendid carrers and prosperity  in
+the Dream Country. As I haven't heard from 'Simsalabim' since 1992,
+I assume that the magic spell worked:got green cards and eventually
+the citizenship, found well paid work  in a prestigeous company and
+left their silly stuff abandoned and almost forgotten ... hopefully
+not by everyone.
+
+  I was really addicted to the game, until it happened to be rather
+fast for my new Pentium MMX. I started thinking  of writing a Linux
+version of the game and I finally did!  Unlike  its prototype, this
+implementaion  is expected to to run on a  wide  range of computers
+due to using a higher timer resolution, as oppossed to  calibration
+adopted by the original implementation. It's native mode is 640x480
+256 colours, however the X-version works also(with less efficiency)
+for True-Colour visuals (depth 16 to 32bpp). With a console version
+you can try 16-colour modes(640x480 and original 640x350) that will
+work even for an unsupported or badly supported video card!
+
+  Among other enhancements of IFRAC are choosing music tunes,volume
+control, using joystick, and the ability to play by itself. 
+
+  Someone  may  like the  picture of threatening big cube appearing
+occasionally in the original game with words "Pay your fee, or deal
+with me!" This picture will never appear in IFRAC, not only because
+of copyright issues,  but also  because IFRAC is free, like most of
+other Linux applications. If I ever get  a word  from  the original
+developers, I would ask if they still keep the code (****).  It 
+could hardly help me (on the contrary, I probably  wouldn't  accept
+the challenge, if the  code was available), but rather will satisfy
+my curiosity. Source code unavailability prevented from  using same
+logic for selecting a block, advancing level, etc. For  that reason
+IFRAC is not a port, but rather a clone of  the original game - you
+should not compare scores, or draw similar parallels.
+
+  Though IFRAC is a free and open source application(***),it is not
+GPL. It should not be a major concern, unless you are going to use
+it for something other than playing.
+
+  At it often happens,the IFRAC framework took me only a fortnight,
+while most of the time had been spent on introduciton, high scores,
+music and other "minor" stuff. Thank  to Sydney Olympics, otherwise
+I could work on IFRAC for ages, but now it looks like a resurrected
+IFRAC is ready to appear  in a  new quality and for a new audience.
+Will it feel confortable with Linux?  Well, I did the best. 
+
+  Let this return of FRAC remind you the good old days of slow CPUs
+and high-skilled programmers,when a whole sophisticated application
+could easily fit into a 360K  floppy, when  robustness, high effici-
+ency and a small size were the major criteria for the quality.
+
+
+ HAVE FUN!            Abandoned Computer Enthusiast.  15-Sep-2000.
+
+(*) A.k.a. Max Tegmark, both developers are originally from Sweden.
+
+(**) Later called 'BeeBop' for some legal reasons, I definitely
+    prefer the original name.
+
+(***) Now I have good relations with both of the developers.
+    My imagination was really wierd,  because the real story is
+    different from what I expected.                   24-Mar-2001
+
+(****) I've got the full original code written (as I expected) in
+    Object Pascal, but the original idea is so different, that
+    (not without hesitation) I decided to let ifrac live its
+    own live, however some ideas were ported to v. 1.3.0
+                                                      24-Mar-2001
+
+(***) Currently ifrac is considered as an FRS ("Freely Redistributable
+    Source") application. Its current license is derived from "Artistic".
+                                                      04-Dec-2000.
+    Now it is not even FRS, because a part of code is unavaliable
+                                                      24-Mar-2001
+
+
+My other creatures.
+===================
+Take your time to try my other applications:
+
+Intelligent TETRIS:  http://www.alphalink.com.au/~michg/ace/itetris
+-------------------
+
+An Linux implementation  of the ethernally young packing game.
+Supports  16  and  256 colour modes for libvga, and practically all
+colour modes for X11.  Choosing  tunes, ability to play by itself...
+Sounds familiar?  I  simply wanted  to  emphasize  the relationship
+between the two packing games, or probably I really ran out of fresh
+ideas...  Size below 220K (tar.gz) 
+
+Sing Along Disc Player:  http://www.alphalink.com.au/~michg/ace/sadp
+----------------------
+A CD player (text version - ncurses, X11 version - xforms).
+Here are some of its features:  built in mixer,   spectrum analyser,
+oscilloscope, OSS and native ALSA support, storing disc information,
+multiple preference lists,  CD-TEXT  and  limited  CD-EXTRA support,
+built-in  access to CD data bases on the Internet, interactive mini-
+window and docking with WindowMaker (X-version).   Practically   all
+extensions are optional, even sound card support is not mandatory!
+
+Size below 360K (tar.gz).
+
+For quite a long time I believed it to be the best CD player in  the
+world. Though I am more realistic now, I still like it and recommend
+it to everyone.
+
+
+Drop me a message...
+====================
+
+  To encourage that I even established a scroller in the introduction
+screen. Don't  tell me that nobody is going to read it till the  end.
+If you insist on that, I will disable any premature exit,  so that it
+will really look like Star Wars seen on a tape recorder with a broken
+FF button.
+
+  Your bug reports and any comment are welcomed at xifrac@yahoo.com.au
+Please, put 'ifrac' somewhere in the subject, to prevent throwing the
+message to Microsoft Outlook (tm) 2000, or another rubbish  bin.  You
+can't imagine how much junk mail I get daily. 
+
+  And if you really enjoy the game,send me a postcard from your place
+to the following snail mail address:
+
+		Michael Glickman
+		Phoneware Communication Systems Pty Ltd
+		303-313 Burwood Hwy 
+		Burwood East VIC 3151
+		AUSTRALIA
+
+----------------------------------------------------------
+PLEASE!!! Don't use this address for any other purposes!!!
+----------------------------------------------------------
+My Linux stuff has absolutely nothing to do with Phoneware.
+

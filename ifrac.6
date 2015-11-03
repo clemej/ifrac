@@ -1,0 +1,828 @@
+.TH ITETRIS 6  "01 Jun 2001" "" "Version 1.4.0: libvga X11"
+.SH NAME
+INTELLIGENT FRAC \- a new old 3D packing game.
+
+.SH CONTENT
+* ABOUT THE GAME
+.br
+* COMMAND LINE
+.br
+* CONTROLLING THE GAME
+.br
+  Starting the game.
+.br
+  Moving blocks.
+.br
+  Common commands.
+.br
+  Volume control.
+.br
+  Pausing and BOSS feature.
+.br
+* SCORING
+.br
+  Keeping score. 
+.br
+  World-wide score table.
+.br
+* PLAYING MUSIC
+.br
+  Background music list.
+.br
+* RELEASE INFORMATION
+
+.SH ABOUT THE GAME
+FRAC is probably the simplest 3D packing game I know. Instead
+of sophisticated figures, you have simple polyhedral blocks
+that have to be packed in the most optimal way.
+
+As usually, each full layer is released. This not only gives you
+points, but also a chance to see the obscured gaps in the game board.
+
+This realisation scores top 15 human scores, and can also
+play itself (demo mode). It supports different screen resolutions
+and  colour depths from 4 to 32 bpp. Optional features: joystick,
+background music, level control. It also can play game itself.
+
+The game is available in console(libvga) and X11 implementations.
+The latter can run either in a window or in direct graphic (DGA) mode.
+The manual covers all implementations.
+
+You don't need any package, appart from libvga(a.k.a. svgalib)
+or X11-compatible server (XFree86-DGA support is required for direct
+graphic access).
+
+
+.SH COMMAND LINE
+.B ifrac \fI[options]\fR  -  Linux svgalib version
+.br
+.B xifrac \fI[options]\fR	-  X11 version
+
+If you call xifrac from xterm, using background mode ('xifrac &')
+is recommended, however background mode should be avoided for
+a console version.
+
+.br
+Option keywords are prefixed by a hyphen (\-).
+If an option accepts an argument, it is specified after '=', or as a separate
+word. Any keyword can be extended to make it more descriptive (e.g
+using  \fIvres\fR where \fIvr\fR would be sufficient). All keywords are
+case insensitive. Thus both of the following command lines are equivalent:
+
+	ifrac -vr=l
+.br
+	ifrac -VRes Low
+
+.HP 0
+In the following desription, alternative options are separated by a
+vertical bar, where the default option comes first
+(e.g. \fIbest\fR is the default option for \fI-vr\fR).
+
+.SS \fUList of command line options\fR
+.TP 
+.B -bpp=xx  \fR (console only)
+Specifies screen depth (bits per pixel) for console version.
+Supported bpp values are 4, 8, 15, 16, 24 and 32, default 8.
+If specified depth is not supported, the lower depth will be attempted.
+This parameter is not effective with \fIvr=low\fR, where depth 4 is always
+be used. It is also ignored by X version which uses default screen depth.
+
+.TP 
+.B -cfont  \fR  (X11 only)
+Use console font instead of native X font.
+This can be more efficient (especially with \fIdifrac\fR)
+and look better. See section \fIFonts\fR in \fIINSTALL\fR
+for more information.
+
+.TP 
+.B -dga  \fR  (X11 only)
+Run xifrac in a full screen mode using direct graphic access (DGA).
+Requires support of XFree86-DGA 2.0 by X server.
+See section "Using XFree86-DGA" in INSTALL file for details. 
+
+.TP 
+.B -dnz  \fR  (X11 only)
+Run xifrac direct graphic access (DGA) using current screen
+resolution. Requires support of XFree86-DGA 2.0 by X server.
+See section "Using XFree86-DGA" in INSTALL file. 
+
+.TP 
+.B -dva=mode  \fR  (console only)
+Select graphic memory access:
+.br
+	no     - svgalib engine (safest)
+.br
+	banked - direct memory access by 64K pages
+.br
+	linear - linear framebuffer (fastest, default)
+
+Normally, you should not worry much about that, because the application
+will automatically select the most appropiate way of graphic memory
+access. However, you might prefer \fB-dva=banked\fR in order to free RAM
+for concurrent tasks. Direct video access is not used in VGA (16-colour)
+mode.
+
+.TP 
+.B -jb=xxxx \fR
+Assign actions to joystick buttons. 
+Each action is represented with a single letter, as the following:
+.br
+	B - rotate block back
+.br
+	D - drop block
+.br
+	H - show help panel
+.br
+	L - next speed level
+.br
+	M - stop/start background music
+.br
+	N - show/hide next block
+.br
+	O - OS/boss
+.br
+	P - pause (same as H)
+.br
+	R - rotate block forward
+.br
+	T - show status
+.br
+	V - void (do nothing)
+.br
+	W - descend block (down)
+.br
+For example, \fBjb=rdbm\fR assigns 'rotate' to button1, 'drop'
+to button2, 'rotate back' to button3, and 'down' to button 4.
+Default settings are 'RDVV'.
+
+Changing actions for buttons 1 and 2 may also affect joystick behaviour
+between games. 
+
+.TP 
+.B -jc \fR
+Force classic interface for joystick
+(joystick interfaces are discussed in INSTALL file).
+.TP 
+.B -jn \fR
+Disable joystick.
+
+
+.TP 
+.B -mb=xxx \fR
+Assign actions to mouse buttons.
+Action letters are same as for \fI-jb\fR argument, default 'RDW'.
+The assigned actions affects only game mode, outside the game buttons always operate in a standard way.
+Yan can only assign actions to the three mouse buttons, specified in the following order: \fIleft, right, middle\fR.
+Mouse buttons 4 and 5 are always used for moving blocks (see \fBMoving blocks\fR).
+
+.TP
+.B -mn  \fR
+Disable mouse.
+
+
+.TP 
+.B -h
+Print command line summary and quit.
+All other command line options are ignored.
+This action is also taken if an invalid option
+appears in command line.
+
+.TP 
+.B -kil \fR (X11 only)
+Kill a game that was paused with \fIboss\fR command.
+(see \fBCONTROLLING THE GAME\fR  section below).
+If there are no suspended games, type a message and quit.
+All other command line options are ignored.
+
+.TP 
+.B -mus=fname \fR
+Set location of background music play list. Default location is 
+specified during compilation (usually \fI~/.ifrac.bgl\fR).
+
+.TP 
+.B -mus=* \fR
+Don't play background music.
+  
+.TP 
+.B -noi
+Skip introduction.
+
+.TP 
+.B -nor  (X11 only)
+Always start a new game even if there is a suspended one.
+A suspended game can be later activated in the same session
+by running xifrac with '-res' argument or without an argument.
+
+.TP 
+.B -pri \fR (X11 only)
+Force using private colour map with pseudo-colour visual
+(used normally for 256-colour mode). If the option is omitted,
+the application will use private colour map, only if
+the default colour map can't allocate all colours needed.
+Option is ignored for other visuals (static-colour, true-colour, etc). 
+
+.TP 
+.B -res \fR (X11 only)
+Resume a game that was paused with \fIboss\fR command.
+(see \fBCONTROLLING THE GAME\fR  section below).
+If there are no suspended games, type a message and quit.
+All other command line options are ignored.
+
+.TP 
+.B -vr=[b|l|n]
+
+Specifies screen resolution or window size, as the following:
+
+\fBb\ (best)\fR   make choice according to screen size (typically
+ size 640x480 will be chosen);
+.br
+\fBl\ (low)\fR    screen size 640x350 for console version,
+window size 600x400 for X version running in window,
+size 640x400 for X version running direct graphic (-dga or -dnz);
+.br
+\fBn\ (normal)\fR use screen resolution or window size 640x480.
+.br
+
+
+.SH CONTROLLING THE GAME
+.SS Starting game
+While in Top Scores screen, select starting level, number of layers, and game type (real play and demo).
+TAB keys changes current field (level, layers, type), Shift+TAB does that in the opposite direction.
+To change value of current field, use arrow keys. Press Enter to start the game.
+
+.H0
+\fBWith joystick\fR use button 2 to select current filed, lever (or arrow keys) for changing the value of current field,
+then press button 1 to start the game.
+
+.H0
+\fBUsing mouse in full-screen mode (svgalib or DGA):\fR use right button to select current field; 
+to change the value of current field use wheels or buttons 4,5 (see Moving block section);
+press left button to start the game.
+
+\fBUsing mouse with X11 window mode:\fR just click values with left mouse button, 
+then click Play or Demo to start the game in corresponding mode.
+
+
+.SS Moving blocks
+Use arrow keys or joystick lever to move a block in horizontal plane
+(forward, backward, or diagonally).The middle key (\fI5\fR) rotates the block,
+while pressing \fIEnter\fR rotates block in an opposite direction. 
+Instead of arrow keys, left keyboard keys (QWEASDZXC for QWERTY keyboard) 
+can be used. 
+
+Keyboard operates even if joystick is enabled. All keys are insensitive
+to case and NumLock. \fIShift\fR pressed with a rotation key inverts
+the direction of rotation.
+
+Additional keys:
+.TP
+.B Space\fR - drop
+.TP
+.B Ins or 0\fR- descend block (down)
+This does not decrement the bonus, and can be used for driving
+a block throw a 'maze' (see \fBSCORING\fR section).
+
+Special use of 'Drop' command is stopping repainting a board after releasing
+a layer.
+
+.HP 0 
+\fBUsing joystick buttons\fR: with a standard button layout,
+button1 produces forward rotation (as '5' key), button2  drops.
+Joystick button actions can be re-assigned with -jb command line
+option, that can also make use of other buttons if available.
+
+Navigation keys or joystick are also used for in \fBselection screen\fR
+for choosing starting level, number of layers
+or game mode (play or demo), depending
+on the current selection box. Use TAB or Space to change current
+box (Shift+TAB or Space selects previous block). 
+
+.HP 0
+\fBUsing mouse buttons and wheel(-s)\fR:
+.br
+As it mentioned before, left, right and middle mouse buttons are
+customized with -mb command line argument. Wheel(-s) and additional buttons
+are used in the following way:
+.br
+   First, or only wheel - move block forward / back,
+.br
+   buttons 4 and 5 (MS Mouse explorer), or second wheel
+.br
+   (dual-wheel mouse) - move block left / right.
+.br
+.HP 0
+For svgalib you need to specify mouse type in libvga.config, e.g.
+.br
+	mouse DRMOUSE4DS  	# Dual-wheel mouse
+.br
+	mouse ExplorerPS2  	# MS Mouse Explorer
+.br
+.HP 0
+For correct X11 functionality you need the following:
+
+.br
+.I Dual-wheel mouse (e.g. A4):
+.br
+In /etc/X11/XF86Config:
+.br
+    Option      "Protocol"       "IMPS/2"
+.br	
+    Option      "ZAxisMapping"   "4 5 6 7"
+
+.br	
+.I MS Intellimouse Explorer:
+.br
+In /etc/X11/XF86Config:
+.br
+	Option      "Protocol"       "ExplorerPS/2"
+.br
+	Option      "ZAxisMapping"   "6 7"
+.br
+In ~/.xinitrc:
+.br
+	xmodmap -e "pointer = 1 2 3 6 7 4 5"
+.HP 0
+
+.SS Common commands.
+The following commands work in both play and demo mode.
+.TP
+.B N\fR - show hide next block
+.TP
+.B L\fR - go to next speed level
+.TP
+.B +\fR - rotate board
+Play board can be rotated in both directions - this may reaveal
+obscured spots, especially in demo mode. Rotation affects 
+controlling blocks, but not their internal behaviour. This
+is why observing a rotated board might be confusing.
+To rotate board clockwise press \fIPlus\fR(+) on numeric keypad, or
++/= keyboard key. To roate board counter clockwise, press
+same key with \fIShift\fR.
+.TP
+.B J\fR - enable/calibrate joystick
+If joystick was disabled by pressing 'K', it will be re-enabled and
+calibrated, otherwise joystick will be re-calibrated. 
+.br
+N.B. Currently calibration works only for the classic interface. 
+If calibration is effective, joystick lever must be in neutral 
+position, when pressing 'J' or when the game starts. Using a
+calibration routine comming with the driver is always recommended.
+.TP
+.B K\fR - disable joystick (keyboard only)
+.TP
+.B M\fR - turn off / restart background music.
+.TP
+.B H\fR - show help screen.
+.TP
+.B P\fR - pause, same as 'H'.
+.TP
+.B T\fR or \fBF2\fR - show status screen.
+This allows to check current settings, free memory,
+joystick readings, or control volume and balance.
+.T O back quote or F1 - boss
+See subsection \fIPausing and BOSS feature\fR below.
+.T Esc or Del - quit game / application.
+Within game or demo: quit game or demo mode, bring summary screen.
+.br
+Within selection screen: quit application
+
+.SS Volume control.
+IFRAC provides a useful tool to control volume and balance
+without using an external application. To use this feature, you
+need an OSS-compatible driver (OSS, Linux Sound Driver, or ALSA)
+that provides mixer support for your sound card.
+
+The application selects first available mixer device in the following list:
+
+*  Master Volume
+.br
+*  PCM
+.br
+*  Alternative PCM (PCM-2)
+.br
+*  Synthesizer
+
+Volume and balance are controlled with the same keys as used
+for moving a block, but with Shift:
+	
+.br
+	Shift+Up    - increase volume
+.br
+	Shift+Down  - reduce volume
+.br
+	Shift+Right - balance right
+.br
+	Shift+Left  - balance left
+
+Alternatively you can use mouse:
+.br
+	(First) wheel: volume up/down,
+.br
+	Second wheel or buttons 4,5 - balance left/right.
+.br
+
+STATUS screen provides a convenient way to control volume and balance.
+You don't need to press Shift for controlling volume/balance in STATUS screen.
+
+
+
+.SS Pausing and BOSS feature.
+To pause a game press 'H' or 'T'. This will suspend the game
+bringing Help or Status screen. The game will also pause
+if you change current terminal (console version, libvga 1.2.11+),
+or minimize window in non-demo mode (X version).
+
+On the contrary, BOSS feature allows to leave the application temporary,
+so that its presence in the system can be hardly noticed ('ps' or
+its equivalent is the only evidence I can think of). 
+Even if you are not afraid of your boss, you will find this feature
+useful, especially in console or DGA mode, for attending or starting
+other processes.
+
+BOSS feature is invoked by pressing \fIO\fR, back quote or \fIF1\fR key.
+Implementation of the boss command is different for console and X versions.
+
+.B Console version.
+Music stops, card switches to text mode, and the shell
+is called. Shell is chosen according to user settings. The application
+will also clear the screen and call 'ls' to hide the command line that
+called 'ifrac'. To resume the game, type \fIexit\fR on shell prompt.
+
+.B X version (window or DGA mode).
+Music stops, the application hides, and original screen
+size is restored. THe game will be resume when you start
+xifrac again in the same session without an argument.
+To avoid resuming the game (start a new game and keep
+resumed game for later) type \fIxifrac -nores\fR.
+To terminatea suspended game, run \fIxifrac -kil\fR.
+You can have only one suspended process. BOSS command
+will kill a previously "bossed" instance if finds any.
+
+
+.SH SCORING
+
+.SS Keeping score.
+
+Any time when a block reaches its final position, a bonus value is added to
+player's score. Initial value of the bonus is 20. This value is reduced
+to 15 if next block is shown.
+
+Bonus decrements every time when the block descends 'by itself'.
+Hence, you can get a higher score if you drop a block as soon as possible,
+or use 'Down', rather then simply wait, when you need to slide 
+under another block.
+
+You also get points for full layers. Before version 1.3.0
+you simply got 100 points for each released layer.
+Starting from ifrac 1.3.0 you score more by releasing
+eeveral layers at once, according to the following table:
+.br
+    1 layer  -  100 points
+.br  
+    2 layers -  300 points
+.br  
+    3 layers -  600 points
+.br
+    4 layers - 1000 points
+
+.SS World-wide score table.
+
+Starting from ifrac-1.3.0 you can submit your score to World Wide
+Score Table. If you are one of the local top scorers, and your score
+is 5000 or higher, you get a code (password) that will be checked
+during submission. The submission URL (http address and arguments)
+ is stored in an HTML file located in the directory
+specified by IFRAC_HTML_DIR environment variable, or user home
+directory if variable is missing, and named ifrac_scoreN..N.html, 
+where N..N is your score (e.g. ifrac_score10000.html). Whenever your
+are on the web, open this file in a browser and click the link.
+This will transfer you to IFRAC submission site, where you might
+wish to correct or add some information before actual submission.
+If you are connected diring the game, you can do submission straight
+away: the program will call browser, specified by HTML_BROWSER
+variable, if not found netscape or lynx will be called depending
+on whether X or console version is used.
+
+For obvious reasons, I can't give up the source code for generating
+submission password. Therefore submission facility is present only
+at pre-compiled versions. If your platform is not supported, you
+can send me a cross-compiler for Intel or provide with a temporary
+shell account for your site.
+
+
+.SH PLAYING MUSIC 
+
+The game allows you to play music, as you play game or watch demo.
+Music automatically changes with moving to a next level, and stops
+with ending the game.
+
+You can select your favorite music players and music files.
+The only suggestion is that the music player should be a console
+application, that preferably does not use the terminal intensively,
+and does not require any human interaction. Fortunately, most of
+popular players accept quiet mode (usually '-q' as command line
+argument) that should be used where possible. Otherwise
+IFRAC allows to re-direct standard files (stdout, stdin, stderr)
+to /dev/null or elsewhere that might help with extremely talkative players.
+All music players, mentioned in examples below, or appearing in sample
+music list \fIifrac.bgl\fR work right with IFRAC.
+
+
+.SS Background music list.
+
+In order to play background music, you need to build a
+Background Music List file. Standard location of
+Background Music List file is specified during the installation.
+Normally it is ~/.ifrac.bgl\fR (i.e '.ifrac.bgl in user's home directory).
+This location can be suppressed with \fB-mus\fR command line
+option, so that several lists can be used. Background music
+can be disabled with \fB-mus=*\fR command line option.
+
+This file can be stored in unpacked or gzip-compressed format.
+If specified file name does not already end with '.gz',
+the application will try to open it with '.gz' extension,
+in case it fails to open an uncompressed file.
+
+Sample background play list 'ifrac.bgl' is supplied in ifrac
+distribution and contains extensive comments. During installation
+it is usually copied to /usr/local/doc/ifrac directory.
+You need to customise it, to include your favourite tunes.
+After that, copy it to your home directory, prefixed by a dot:
+					cp ifrac.bgl ~/.ifrac.bgl.
+
+The following hints will help you, in case you have difficulties.
+
+Background Music List is a plain text file.
+It consists of several sections, described below. Each section
+starts with a header in square brackets [].
+
+Hash (pound) symbol (#) starts a comment and can be used anywhere
+in the line. The rest of line is ignored.
+
+Any blank line is ignored. In particular, line starting with '#'
+is ignored as equivalent to a blank line.
+
+.HP 4
+The following sections are used:
+.br
+[default]  # Default settings
+.br
+[apps]     # Applications (music players)
+.br
+           # associated with file types.
+.br
+[intro]    # Settings: introduction screen
+.br
+[scores]   #           top scores screen
+.br
+[topscore] #           top scorer congratulation
+.br
+[stat]     #           game statistics
+.br
+[1]        #           game level 1
+.br
+   . . . . . . . . . . . . . . . . . . . . . . . . 
+.br
+[9]        #           game level 9
+
+
+Sections \fIdefault\fR and \fIapps\fR should appear before all others.
+
+.SS 'Default' section.
+
+Any specification in \fIdefault\fR section applies to any stage where
+it is not overwritten.
+
+.HP 4
+The following specifications are used in \fIdefault\fR section:
+
+.TP
+.B out=filename
+.TP
+.B in=filename
+.TP
+.B err=filename
+
+Redirect standard output, input or err to
+a specified file, where 'filename' can be any valid path,
+or one of the following special values, starting with '%':
+
+	%null - direct to the null device (/dev/null)
+	%std  - do not redirect (same as omitted)
+
+.TP
+.B opt=values
+
+Options, as one or several values separated by commas.
+The options can be specified for default entry, file types ('ext' section)
+and an individual levels. The effective option is a combination of
+options in order specified above. Example:
+
+	Default:     opt=loop,nostop
+.br
+	Ext section: opt=stop
+.br
+	Level:       opt=noloop
+.br
+	Effective option: noloop,stop (nokill assumed).
+
+
+The following options are used currently:
+
+.HP 4
+loop/noloop - restart/don't restart tune, if it finished before
+end of the game stage
+
+.HP 4
+kill/nokill  - use SIGKILL / SIGTERM to terminate tune
+(don't use 'kill' unless really needed).
+ 
+.HP 4
+stop/nostop  - use/don't use SIGSTOP/SIGCONT to stop/resume
+the music (pressing 'M', or going to/returning from boss mode).
+As a result of that, resume will not restart the music, but
+continue it from the place it was previously stopped. This
+option is not recommended as the default one, as not all music
+application process SIGSTOP/SIGCONT correctly. 'opt=stop' seems
+to be OK with 'mpg123' and 'mikmod', with another application
+you need testing.
+
+.TP
+.B vol=volume
+
+Specifies default volume, as a number from 0(quiet) to 99(high),
+Setting vol=%same means the volume should remain unchanged.
+
+.TP
+.B pau=pause
+
+A positive pause (in milliseconds) will stop the main process on
+specified period giving the playing process time to load music file,
+patches, sound fonts etc.
+
+.TP
+.B pri=priority_increment
+
+A non-negative volume, that specify the priority increment for
+a music application (a parameter to 'nice' function). A bigger
+priority value reduces the music application priority. Zero value
+means same priority for main and music processes.
+
+.HP 0
+\fBExample\fR. The following is assumed, if 'default'
+section is omitted:
+
+[default]
+.br
+in=%null
+.br
+out=%null
+.br
+err=%std
+.br
+opt=loop
+.br
+vol=%no
+.br
+pau=0
+.br
+pri=4
+.br
+
+.SS 'Apps' section.
+
+This section is obsolete. Though it is still supported,
+use 'ext' instead. 
+
+.SS 'Ext' sections.
+
+An 'ext' section associates a music application and options 
+to particular muisc file types (file name extensions).
+
+This section appears as the following
+
+[ext:type_list]
+.br
+app=application
+.br
+opt=values
+.br
+pau=value
+.br
+pri=priority_increment
+
+\fBtype_list\fR is a single or several file name extensions separated
+by comas;
+
+The following extensions are attributed to a \fBcompressed file\fR: gz, bz2, bz, z, zip.
+If a file name is ended with one of the following extensions, the application
+is determined by its previous suffix, if any.  \fBIFRAC does not perform uncompressing!\fR
+It should be provided by the application that plays the file.
+
+\fBapplication\fR is a command line needed to call the music player.
+Use %f to specify explicitly location of file name in the command line,
+if '%f' is not used, and file name is specified, it will be added as the 
+last command line argument.
+
+\fBopt\fR is a list of options command line needed to call the music player.
+Use %f to specify explicitly location of file name in the command line,
+if '%f' is not used, and file name is specified, it will be added as the 
+last command line argument.
+
+\fBpau\fR and \fBpri\fR lines are used as specified for Default section.
+
+.HP
+Example:
+.br	
+[ext:mp3]
+.br
+mp3=mpg123 -q %f   # explicit location of file name
+.br
+                   # is redundant, just an example
+.br
+opt=stop
+
+.br
+[ext:mod,xm,s3m,it]
+.br
+app=mikmod -q -r4
+.br
+opt=stop
+
+.br
+[ext:mid,kar]
+.br
+app=playmidi
+.br
+
+In this case, both files  'xxx.mod' and 'xxx.mod.zip' are attributed
+to 'mikmod -q -r4', while for file 'xxx.zip' the application has to
+be specified explicitly (see next section).   
+
+
+.SH Other sections.
+
+Other sections ('intro', 'scores', 'topscore', 'stat', 1 - 9)
+refer to a particular game stage. These sections can contain any
+any of specifications used with 'default' section to overwrite it
+for a particular stage.
+
+In addition the following keywords are used
+
+.TP
+.B app=command_line
+.TP
+.B app=%file_type
+
+Specifies the music application command line (as in 'ext' section),
+or file type (extension) prefixed by '%'. This line is needed in
+case a specific application is needed for a particular level,
+or file type cannot be obtained from the extension.
+
+See example below.
+
+.TP
+.B file=filename
+
+Specifies music file name. It can be a full path or start with \fI~\fR,
+similarly to bash interpretation (e.g ~/xxx.mp3 refers to current user's
+home directory,  ~homer/xxx/mp3 refers to homer's home directory).
+
+If file name includes spaces inside it, code it 'as is' (without
+a back slash or surrounding quotation marks). You can't use
+a file name that starts or ends with spaces (hopefully ifrac
+is not the only one that can be confused with that).
+
+The following special values (starting with '%') can be used
+instead of a file name:
+.br
+\fB%continue\fR or \fB%leave\fR - don't change the tune
+.br
+\fB%stop\fR or \fB%quiet\fR - stop music (don't play anything)
+
+If file name is omitted or empty, while application is specified,
+the command line is taken unchanged. This may be useful with
+a music player that doesn't need a file name (self player, CD-player etc).
+
+Example:
+.br	
+	file=~/mod/mod[1].whispers.zip
+.br
+	app=%mod		# need explicit file type
+
+
+.SH RELEASE INFORMATION.
+
+FRAC was originally implemented for MS DOS and EGA resolution (640x350x16)
+by Max Shapiro and Per Bergland, a.k.a. "\fBSimsalabim Software\fR" in 1990.
+
+Intelligent FRAC: (C) Michael Glickman,  2000.
+
+The latest version is available from
+
+.B	http://ifrac.tripod.com
+
+Send all comments and bug reports to \fBxifrac@yahoo.com.au\fR
+Please, place 'ifrac' somewhere in the subject to ensure
+that your message won't be ignored as an unsolicited material.
+

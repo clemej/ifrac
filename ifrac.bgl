@@ -1,0 +1,91 @@
+#========================================================
+# Sample background music play list for IFRAC
+# See man page for details
+#--------------------------------------------------------
+# Created 13-Aug-00	
+#========================================================
+
+# Default settings (apply to all levels,
+# unless otherwise specified).
+[default]
+out=%null                #redirect stdout to /dev/null
+in=%null                 #redirect stdin to /dev/null
+err=%std                 #don't redirect stderr
+opt=loop,nostop,nokill   #resume play after finished
+                         #do not use SIGSTOP for pausing
+                         #use SIGTERM (not SIGKILL) to terminate
+vol=50		               #volume: 0 - no volume, 99 - max volume
+                         #        %same - volume unchanged (default)
+pau=0                    # default pause value     
+pri=4                    # default priority increment     
+
+[ext:mp3]
+# A command line may have '%f' for explicit file name location,
+# as seen from the following example. Actually, in this case
+# it is redundant, becase file name is automatically appended,
+# if '%f' is not specified.
+app=mpg123 -q %f
+opt=stop             # Recent mpg123 should work OK with SIGSTOP
+
+[ext:mod,xm,s3m,it]
+app=mikmod -q
+opt=stop
+
+[ext:mid,kar]
+app=playmidi
+# playmidi does not seem to support SIGSTOP
+pau=1000
+pri=2
+
+[intro]
+file=/f:/mid/gusmid/672-chia.mid
+opt=noloop		# Specific option for a particular level
+
+[scores]
+file=/f:/mid/gusmid/675-du.mid
+
+[topscore]
+file=/f:/mid/abba/trooper.mid
+
+[stat]
+file=%stop		# Stop music for 'Statistics' screen
+
+[1]			# Level 1                  
+# ~ stands for current home directory
+# (~homer would stand for homer's home directory)
+# '.gz' suffix does not effect the file type: it
+# will be interpreted as '.mod' 
+file=~/stamper.mod.gz
+
+[2]			# Level 2
+# Exaple of having a space in the middle of file name.
+# Don't use back slash, or surrounding quotation marks
+# just type 'as is' 
+file=~/mp3/Eagles HotelCalifornia.mp3  # ~ stands for home directory
+[3]
+file=%leave		# Same tune can be spread ...
+[4]
+file=%leave		# ... over several adjacent levels
+
+# Level 5
+[5]
+# When the explicit file type is needed...
+file=/f:/mod/lizard/mod[1].whispers.zip
+app=%mod
+vol=30              # Specific volume level
+[6]
+file=%leave
+vol=50              # Back to standard volume
+[7]
+# ~fred stands for fred's home directory. For current user's
+# home directory just use ~ as showin in example for level 2
+file=~fred/xm/n97-amb2.xm
+[8]
+file=%leave
+[9]
+file=%stop          # Stop music for the last level
+                    # A a good idea, esp.  with a 486 :=)
+
+
+
+

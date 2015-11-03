@@ -1,0 +1,389 @@
+CONTENT:
+	Quick start.
+	If you are not an administrator...
+	Configuration options.
+	Configuration source files.
+	Libraries used.
+	Keyboard access modes.
+	Fonts.
+	Joystick drivers.
+	Using XFree86-DGA (Direct Graphic Access).
+
+Quick start.
+============
+
+Type
+	./configure
+	make
+
+After that log in as root (if you aren't already) and type 
+
+	make install
+
+That's it!
+
+
+It you are not an administrator...
+==================================
+
+If you can't get administrator privileges, you can still run 'xifrac'.
+
+You can also run 'ifrac' with svgalib 1.9.0+, but the system should be
+properly configured for that (support for /dev/svga with public write
+access).
+
+The application is a single module with all graphics built it.
+The only concern is the top score file. You can either play without
+recording top scores, or relocate the top scores while calling 
+'configure', like this
+
+	mkdir ~/xifrac
+	./configure --without-console --with-scoredir=~/xifrac
+	make
+	cp ./xifrac ~/xifrac
+
+
+Configuration options
+=====================
+
+IFRAC configuration provides support for '--prefix', '--mandir',
+'--bindir' and some other standard configuration settings.
+Default prefix is '/usr/local'. Shell variables CC and CFLAGS
+(compiler name and flags) are also supported, example (bash):
+
+	export CC=egcs
+	export CFLAGS=-mpentium -O6
+	./configure --prefix=/usr
+
+Here are IFRAC-specific configuration options:
+
+	--with-scoredir=DIRECTORY
+		Directory for top scores file, default: /var/games
+
+	--with-scorefile=FILENAME
+		Name of top scores file, default: ifrac.scores	
+
+	--with-cfontdir=DIRECTORY
+		Directory for console font,default: /usr/lib/kbd/consolefonts
+		See section 'Fonts' below for details.
+
+	--with-cfontfile=FILENAME
+		Name console font file, default: default8x9
+		See section 'Fonts' below for details.
+
+	--with-joystick={yes|classic|no}
+		Support for joystick (see 'Joystick drivers' section below):
+		yes - include both modern and classic interfaces,
+ 	              use the appropriate one (default)
+		classic - include only classic interface; this
+		      should work for all drivers
+		no  - do not include joystick support
+
+	--without-mouse
+		Disable mouse support		
+
+	--without-music
+		Excluse support for background music
+
+	--without-volume
+    Exclude volume control feature
+
+	--without-console
+    Don't generate console (svgalib) version.
+
+	--with-suidroot={auto|yes|no}
+    Enable/disable  'suid root' for console version.
+    If not specified, assumed --with_suidroot=auto, that is 'suid root'
+    is applied depending on the version of svgalib.
+    
+		Don't apply 'suid root' to console version. This may
+		be useful with svgalib-1.9.0+, otherwise you shouldn't
+		use it.
+
+	--without-x11
+		Don't generate GUI(X11) version.
+
+	--without-dga
+		Exclude XFree86-DGA support from xifrac code.
+
+	--with-kbd={raw|cooked}
+		Keyboard access mode for console version. 
+		See 'Keyboard access modes' section below
+
+  --with-lrand={no|yes}
+    ifrac 1.3.0+ source distribution includes code for a random
+    number generator, which actually was ripped from glibc-2.1.3.
+    Using "internal" generator is a good idea, since it provides
+    cross-platform compatibility  of high scores file. However
+    if you used older versions of ifrac with a library different
+    from glibc 2.x.x you might find that your high score file is
+    no longer readable. To fix the problem, use --with-lrand=yes
+    This will result in using library randomizer.
+
+	--with-mangz={auto|yes|no}
+		Compress man page with gzip utility:
+		auto - apply gzip, if a gzipped manual
+		       is found (default)
+		yes  - always apply gzip
+		no   - never apply gzip
+
+	--with-docgz={yes|no}
+		Compress text documents with gzip utility:
+		yes - compress (default)
+		no  - don't compress
+
+	--with-batch
+		'Batch' mode was introduced for RPM packages,
+		that AFAIK don't quite welcome an interaction
+		(I wish to be wrong - please, tell me if I am).
+		This mode is characterised by reduced verbosity
+		and suppressed questions. I doubt if you will
+		find it useful for other purposes.
+
+  --with-wwscore={no|yes}
+    Include code for world-wide score submission.
+    This mode is for internal use only, since
+    the publically distributed source does not
+    contain the required modules.
+
+	
+Configuration source files
+==========================
+
+A more subtle customizing is provided by the following configuration
+source files:
+
+  ifr_textconf.c  - font and text for those who wish to
+                    translate the game into their native language -
+                    currently ifrac does not support multi-byte
+                    characters or right-to-left writing - sorry;
+
+  ifr_srkeys.c	  - key maps for console raw, console "cooked", 
+  ifr_skeys.c  	    and X11/XF86DGA versions respectively;
+  ifr_xkeys.c  	    you may wish to modify those for a non-QWERTY
+               	    keyboard. For consistency, you also have to
+                    edit a bitmap 'ifrac_hlp.xbm', used for help.
+                    After the bimap is modified, remove 'static'
+                    and save it as 'ifr_help_xmb.c'
+
+  ifr_config.c    - all the rest (colours, default joystick
+                    settings etc)
+
+If you find that your colours are much better than original ones,
+or simply wish to make your translation available to everyone,
+send me your modification.  You will have to supply your full name
+and email address, especially for translation: I wouldn't like
+to be responsible for something I am not familiar with.
+
+Keyboard access modes
+=====================
+This section applies to console version where you can select
+raw or 'cooked' keyboard mode as 'with-kbd' argument for configure.
+
+In raw mode (default) the key map is processed directly	by the
+application. This allows to eliminate overhead on redundant 
+processing, however, because of no key buffer used, some key presses
+will be ignored on a slow computer (like 486DX2).
+
+For entering names the raw mode uses translation tables located in
+ifr_srkeys.c, which might need modifications for a non British/US keyboard.
+In particular, you can associate CAPS LOCK mode with different key
+set (e.g. Cyrillic or Greek) using an appropiate console font. 
+
+In the 'cooked' mode, key presses are processed by TTY driver.
+I find it useful for debugging - gdb does not work in raw mode.
+
+Fonts.
+======
+Console font.
+-------------
+Console font is the only choice for 'ifrac'. While 'xifrac'
+use X-font by default, they will use a console font if
+'-cfont' argument appears in the command line.
+
+The console font directory and file name are specified as 
+--with-cfontdir and --with-cfontfile arguments for 'configure'.
+The application supports any raw or psf font that can be compressed with
+gzip. If font file name specified without extension, it will look for
+the raw file (fontname), then for psf file (fontname.psf), and finally
+for compressed fonts (.gz and .psf.gz). This distribution comes with a
+sample console font 'default8x9.psf.gz' that will be installed in the
+directory specified as 'cfontdir' if it isn't there already and
+'default8x9' is speciified as 'cfontfile'.
+
+X font.
+-------
+By default, 'xifrac' and will use native X fonts, using
+standard X engine. All scaling is performed by the application.
+
+Two sets of fixed and variable width fonts (in XLFDC format) are
+specified as XFixedFontList and XVarFontList arrays in 'ifr_textconf.c'.
+The first available font of each set will be used.
+
+Libraries used
+==============
+Both libraries are standard Linux components and are supplied
+with any Linux distributions. The following links are supplied
+in case you wish to upgrade:
+
+Console version:
+----------------
+	libvga (also referred as svgalib)
+
+	Home page: http://www.svgalib.org
+	FTP site:  ftp://metalab.unc.edu (has numerous mirrors)
+	           /pub/Linux/libs/graphics
+
+GUI version:
+------------
+	libX11 and headers. Available from XFree86 site,
+	or one of its mirrors all aver the world:
+
+	HTTP:	http://www.xfree86.org
+	FTP:	ftp://ftp.xfree86.org
+		
+
+Joystick drivers
+================
+There are two generations of Linux joystick drivers 
+with are very different from each other.
+
+The first ("classic") joystick driver for Linux was 
+written in 1992 by Arthur C. Smith with modifications
+by Jeff Tranter, Dan Fandrich, Matt Rhotten et al.
+The last version of this driver generation is 0.8.0
+and (hopefully) can be found at ftp://metalab.unc.edu
+(or its mirror):
+ /pub/Linux/kernel/patches/console/joystick-0.8.0.tar.gz		
+
+You also need a patch for later linux versions (up to 2.2.x)
+by Matt Rhotten	and your humble servant. Currently it can be
+found as a part of 'itetris' distribution (sorry for shameless
+plug - I am going to submit the patch to metalab, so that
+this link most probably will be replaced soon):
+ http://www.alphalink.com.au/~michg/ace/itetris/itet_download.html
+
+The classic driver supports only analogue 2-button joysticks
+(a patch for 4-button Gravis joypad by John Dahlstrom is
+available) and has a problem of blocking the system in order
+to read the axes, that might upset some of applications.
+
+The new joystick driver (version 1.x.x) written almost completely
+from scratch by its current maintainer Vojteck Pavlik, introduces
+a new event-driven ("modern") interface that allows to avoid
+blocking the system for an analogue joystick and is more adequate
+for a wide range of digital joysticks supported by the driver.
+The driver also supports the 'obsolete' classic interface as a
+front end to modern routines: this enables running old programs
+with digital joysticks, but makes the driver not completely 
+compatible with the "good oldie".
+
+I had serious troubles, while using an analogue joystick with
+driver version 1.2.13 (can't you say that 13 is a good number
+after that ?!). I reported the problem to Vojteck who came up with
+an elegant idea of a compromise between the event-driven interface
+and the dumb analogue device. The consequent driver versions 
+(1.2.14 and 1.2.15) work well from me. If you still keep a damn
+1.2.13 or its predecessor, upgrade the driver from a new linux
+kernel, or the following sites:
+			
+			ftp://atrey.karlin.mff.cuni.cz
+      /pub/linux/joystick/joystick-1.2.15.tar.gz
+
+			http://atrey.karlin.mff.cuni.cz/~vojtech/joystick
+
+Both 0.8.0 and 1.2.15 work well for me, so that I can hardly see
+any difference. The configuration script allows forcing classic
+interface for the new driver, however it won't fix the problem
+with driver 1.2.13 mentioned above.
+
+
+Using XFree86-DGA (Direct Graphic Access).
+==========================================
+
+Release 1.2.0 supports XFree86-DGA (direct graphic access) extension
+version 2.0, supplied with XFree86 4.0. The old XF86DGA 1.x interface
+(for XFree86 3.3.x), supported in releases 1.1.0 and 1.1.1 of ifrac,
+is no longer provided. The following discussion assumes that XFree86
+4.0 is used.
+
+XFree86-DGA extension provides direct graphic access to video frame
+buffer that might speed up the performance. With XF66DGA, you can
+run ifrac in full screen mode, where the application will automatically
+switch to a lower screen resolution and restore it after the termination,
+or you can keep current resolution, so that the centre of screen will be
+used by the application. In all cases, XF86DGA disables assess to other
+applications running simultaneously. Use boss feature (discussed in the
+ifrac manual) to attend those in the middle of game.
+
+To invoke direct graphic access (DGA mode), run xifrac with one of the
+following command line options:
+
+  xifrac -dga               # DGA zoom (full screen)
+  xifrac -dnz               # DGA no zoom (centre of screen)
+  
+The application size is 640x480(normal res) or 640x400(low res) according
+to -vr command line option.
+
+You  don't need to be an administrator for using DGA mode, however you
+might need to customize XF86Config (this normally requires root access).
+The sample (ergo standard) XF86Config includes line 'omit xfree86-dga'
+in Module section, which has to be deleted or commented out. For running
+full-screen, you also have to include modes "640x480" and "640x400" at
+least for default screen depth. The following extract from my XF86Config
+illustrates those ideas:
+
+# .......................
+# .......................
+
+Section "Module"
+
+# This loads the DBE extension module.
+  Load        "dbe"   # Double buffer extension
+
+# This loads the miscellaneous extensions module, 
+# We commented out (with #) 'omit xfree86-dga' in order to use it!
+
+  SubSection  "extmod"             # Don't remove the subsection!
+#   Option    "omit xfree86-dga"   # This line is inactive!
+  EndSubSection
+
+# .......................
+
+EndSection
+
+# .......................
+
+Section "Screen"
+  Identifier  "Screen 1"
+  Device      "Diamond Stealth 3D Pro 2M RAM"
+  DefaultDepth 16
+
+  Subsection "Display"
+    Depth      8
+    Modes      "1280x1024" "1024x768" "800x600" "640x480" "640x400"
+    ViewPort   0 0
+    # I prefer PseudoColor, while StaticColor will still work  	
+    # Visual  "StaticColor"
+  EndSubsection
+
+  Subsection "Display"
+    Depth      16
+    Modes      "1152x864" "1024x768" "800x600" "640x480" "640x400"
+    ViewPort   0 0
+  EndSubsection
+
+  Subsection "Display"
+    Depth      24
+    Modes      "800x600" "640x480" "640x400"
+    ViewPort   0 0
+  EndSubsection
+EndSection
+
+# .......................
+# .......................
+
+As opposed to XF86DGA 1.3, mode switch with XF86DGA 2.0 works even
+with  "Dont Zoom" option. 
+
+

@@ -1,0 +1,28 @@
+Begin3
+Title:          Intelligent FRAC (ifrac)
+Version:        1.4.0
+Entered-date:   14Nov03 
+Description:    A linux and X11 (generic and XF86DGA) clone of IFRAC -
+                a 3D packing game, implemented originally in 1990 by
+                Simsalabim Software. Current implementation supports
+                different screen resolutions and colour depths: from
+                4 to 32bpp. Can run on an unsupported, or badly sup- 
+                ported video card. Can play the game itself.Features
+                visual effects, score table,level choice,  fractal
+                images in background. Stores world wide score table.
+                Optional: Joystick and mouse support. Use a stand-
+		alone music player to play your favourite tunes,
+		changing  with speed level.
+                Distributed as  a single package for Linux console,
+                X11 generic and XF86DGA.
+Keywords:       frac, ifrac, tetris, X11, svgalib, joystick
+Author:         xifrac@yahoo.com.au (Michael Glickman)
+Maintained-by:  xifrac@yahoo.com.au (Michael Glickman)
+Primary-site:   ftp.ibiblio.org  /pub/Linux/games/arcade/tetris
+                ifrac-1.4.0.tar.gz  source, no score submission
+                ifrac-1.4.0.i586.tar.gz binaries, features score submission
+                ifrac.lsm 
+Platforms:      X11 or Linux svgalib-1.2.10+ (svgalib-1.9+ recommended)
+Copying-policy: FRS (Freely Redistributable Source)
+End
+

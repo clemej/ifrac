@@ -1,0 +1,238 @@
+#=======================================
+# M.G. 08-May-00
+#=======================================
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+BINDIR=@bindir@
+MANDIR=@mandir@/man6
+DOCDIR=@prefix@/doc/ifrac
+SCOREDIR=@with_scoredir@
+SCOREFILE=@with_scorefile@
+CFONTDIR=@with_cfontdir@
+CFONTFILE=@with_cfontfile@
+DATADIR=@datadir@
+ICONDIR=$(DATADIR)/pixmaps
+
+INSTALL=@INSTALL@
+CC=@CC@
+WITH_CONSOLE=@with_console@
+WITH_KBD=@with_kbd@
+WITH_X=@with_x11@
+WITH_DGA=@with_dga@
+SUID_ROOT=@with_suidroot@
+WITH_MAN_GZ=@with_mangz@
+WITH_DOC_GZ=@with_docgz@
+BATCH_MODE=@with_batch@
+WITH_WWSCORE=@with_wwscore@
+USE_LIB_RAND=@with_lrand@
+
+ifeq ("$(WITH_MAN_GZ)", "auto")
+   ifeq ($(shell echo /usr/man/man?/*.gz), /usr/man/man?/*.gz)
+	WITH_MAN_GZ=no
+   else
+	WITH_MAN_GZ=yes
+   endif
+endif
+
+ifeq ("$(WITH_DGA)", "yes")
+DGALIBS=-lXext -lXxf86dga
+else
+DGALIBS=
+endif
+
+ifeq ("$(WITH_KBD)", "raw")
+CONSKBD=ifr_srkbd.o ifr_srkeys.o
+else
+CONSKBD=ifr_skbd.o ifr_skeys.o
+endif
+
+ifeq ($(USE_LIB_RAND), "yes")
+RANDMODULES=
+else
+RANDMODULES=randbsd.o randbsd_r.o
+endif
+
+ifeq ("$(WITH_WWSCORE)", "yes")
+WWMODULES=ifr_wwscore.o ../ifrac_www/ifr_password.o ../ifrac_www/ifr_wwtext.o
+else
+WWMODULES=
+endif
+
+
+MODULES=ifr_main.o ifr_game.o ifr_image.o ifr_draw.o \
+	ifr_interface.o	ifr_joystick.o ifr_ai.o \
+	ifr_player.o ifr_board.o ifr_pixmap.o \
+	hypoth_bw_xpm.o mandel_bw_xpm.o ifr_help_xbm.o \
+	ifr_intro.o ifr_hiscores.o ifr_extra.o \
+	ifr_sound.o  ifr_common.o ifr_cfont.o \
+	ifr_config.o ifr_textconf.o $(RANDMODULES) $(WWMODULES)
+
+XMODULES=ifr_xgraph.o  ifr_xkbd.o ifr_xtext.o ifr_xkeys.o ifr_xmouse.o ifr_xbuttons.o
+SMODULES=ifr_sgraph.o  ifr_stext.o ifr_smouse.o ifr_sbuttons.o $(CONSKBD)
+
+DOCS=README INSTALL LICENSE ifrac.bgl
+
+COMMON_INSTALL= scorefile_install man_install doc_install cfont_install
+
+
+
+LIBS=
+SLIBS=-lvga 
+XLIBS=-lX11 $(DGALIBS)
+
+LIBDIR= 
+SLIBDIR=
+
+XLIBDIR1=@x_libraries@ 
+ifeq "$(XLIBDIR1)" "" 
+XLIBDIR=
+else
+XLIBDIR=-L $(XLIBDIR1)
+endif 
+
+ifneq "$(WITH_CONSOLE)" "yes"
+COMP_CONSOLE=
+DEP_CONSOLE=
+INST_CONSOLE=
+else 
+COMP_CONSOLE=ifrac
+DEP_CONSOLE=.sifrac.dep
+INST_CONSOLE=ifrac_install
+endif
+
+XINCDIR1=@x_includes@
+ifeq "$(XINCDIR1)"  "" 
+XINCDIR=
+else
+XINCDIR=-I $(XINCDIR1)
+endif 
+
+ifneq "$(WITH_X)" "yes"
+COMP_X=
+DEP_X=
+INST_X=
+CFLAGS=-Wall @CFLAGS@
+else 
+COMP_X=xifrac
+DEP_X=.xifrac.dep
+INST_X=xifrac_install ico_install
+CFLAGS=-Wall $(XINCDIR) @CFLAGS@
+endif
+
+
+all: $(COMP_CONSOLE) $(COMP_X) install_advice
+dep: $(DEP_CONSOLE) $(DEP_X) .ifrac.dep
+install: $(INST_CONSOLE) $(INST_X) $(COMMON_INSTALL)
+
+xifrac: .xifrac.dep .ifrac.dep $(MODULES) $(XMODULES)
+	$(CC) -o xifrac $(MODULES) $(XMODULES) $(XLIBDIR) $(LIBDIR)  $(LIBS) $(XLIBS)
+
+ifrac:  .sifrac.dep .ifrac.dep $(MODULES) $(SMODULES)
+	$(CC) -o ifrac  $(MODULES) $(SMODULES) $(SLIBDIR) $(LIBDIR) $(LIBS) $(SLIBS)
+
+install_advice:
+	@echo ""
+	@echo "Compilation succeeded."
+	@echo "Now log in as root and type 'make install'." 	
+
+cfont_install:
+	$(INSTALL) -d -m755 -C $(CFONTDIR)
+ifeq ("$(CFONTFILE)", "default8x9") 
+	$(INSTALL) -m644 -C default8x9.psf.gz $(CFONTDIR)
+endif
+
+scorefile_install:
+	$(INSTALL) -m755 -d ${SCOREDIR}
+ifeq ("$(BATCH_MODE)", "yes")
+	cp -u ./ifrac.scores $(SCOREDIR)/$(SCOREFILE)
+else		
+	cp -i ./ifrac.scores $(SCOREDIR)/$(SCOREFILE)
+endif
+	chmod 666 $(SCOREDIR)/$(SCOREFILE)
+
+man_install:    ifrac.6
+	$(INSTALL) -m755 -d $(MANDIR)
+ifeq ("$(WITH_MAN_GZ)", "yes")
+	gzip -c ifrac.6 > $(MANDIR)/ifrac.6.gz
+	ln  -sf  $(MANDIR)/ifrac.6.gz $(MANDIR)/xifrac.6.gz
+else
+	$(INSTALL) ifrac.6 $(MANDIR)
+	ln  -sf  $(MANDIR)/ifrac.6 $(MANDIR)/xifrac.6
+endif
+
+doc_install:	$(DOCS) 
+	$(INSTALL) -d -m755  $(DOCDIR)
+	rm -f $(DOCDIR)/*
+	$(INSTALL) -m644 $(DOCS) $(DOCDIR)
+ifeq ("$(WITH_MAN_GZ)", "yes")
+	gzip $(DOCDIR)/*
+endif
+
+
+ico_install:
+	install -d -m755 $(ICONDIR)
+	$(INSTALL) -m644 ifrac_ico.xpm  $(ICONDIR)
+	$(INSTALL) -m644 ifrac_ico_big.xpm  $(ICONDIR)
+
+
+ifrac_install: ifrac 
+	${INSTALL} -m755 -d $(BINDIR)
+ifneq "$(SUID_ROOT)" "no"
+	chown 0 ifrac	
+	chmod 4755 ifrac
+	$(INSTALL) -s -o0 -m4755 ifrac $(BINDIR)
+else
+	$(INSTALL) -s -m755 ifrac $(BINDIR)
+	
+endif
+
+xifrac_install: xifrac
+	${INSTALL} -m755 -d $(BINDIR)
+	$(INSTALL) -m755 -s xifrac $(BINDIR)
+	
+
+wipe:
+	rm -f *.o .*.dep *.bak xifrac ifrac Makefile config.* ifr_autoconf.h
+
+clean:
+	rm -f *.o *.dep
+
+archive:
+	tar -czf ifrac.tar.gz *.c *.h *.xpm *.xbm *.in configure VERSION
+
+
+#$(XMODULES): .xifrac.dep
+
+#$(SMODULES): .sifrac.dep
+
+#$(MODULES):  .ifrac.dep
+
+.xifrac.dep:  $(patsubst %.o,%.c, $(XMODULES))
+	echo '# xifrac module dependencies'  >>.xifrac.dep
+	$(CC) $(CFLAGS) $(INCLUDES) -MM $(patsubst %.o,%.c,$(XMODULES)) >> .xifrac.dep
+
+.sifrac.dep:  $(patsubst %.o,%.c, $(SMODULES))
+	echo '# ifrac(SVGAlib) module dependencies'  >>.sifrac.dep
+	$(CC) $(CFLAGS) $(INCLUDES) -MM $(patsubst %.o,%.c,$(SMODULES)) >> .sifrac.dep
+
+.ifrac.dep:  $(patsubst %.o,%.c, $(MODULES)) 
+	echo '# ifrac common module dependencies'  >>.ifrac.dep
+	$(CC) $(CFLAGS) $(INCLUDES) -MM $(patsubst %.o,%.c,$(MODULES))  >> .ifrac.dep
+
+
+
+ifeq (.ifrac.dep,$(wildcard .ifrac.dep))
+include .ifrac.dep
+endif
+
+ifeq (.sifrac.dep,$(wildcard .sifrac.dep))
+include .sifrac.dep
+endif
+
+ifeq (.xifrac.dep,$(wildcard .xifrac.dep))
+include .xifrac.dep
+endif
+
+
+

@@ -1,0 +1,66 @@
+/*
+   ==============================
+   IFRAC configuration file.
+   Created 31-Jul-00
+   ==============================
+*/
+
+#ifndef IFR_AUTOCONF_H
+#define IFR_AUTOCONF_H
+
+#undef IFRAC_VERSION
+
+#define HAVE_LINUX_JOYSTICK_H 0
+#define HAVE_VALUES_H 0
+#define HAVE_LIMITS_H 0
+#define HAVE_SYS_KD_H 0
+#define HAVE_LINUX_KD_H 0
+#define HAVE_DIRENT_H 0
+
+#define HAVE_SRANDOM  0 
+#define HAVE_SRAND    0   
+#define HAVE_RANDOM  0 
+#define HAVE_RAND    0   
+
+#define SIZEOF_LONG_LONG 0
+#define SIZEOF_LONG 0
+#define SIZEOF_INT  0
+
+#define TIME_WITH_SYS_TIME  0
+#define HAVE_SYS_TIME_H    0
+#define HAVE_GETTIMEOFDAY  0
+#define HAVE_TIME          0
+
+#define HAVE_STRPBRK       0
+#define HAVE_STRSPN        0
+#define HAVE_STRDUP        0
+#define HAVE_STRCASECMP    0
+#define HAVE_STRNCASECMP   0
+
+#define HAVE_SYS_SOUNDCARD_H     0
+#define HAVE_LINUX_SOUNDCARD_H   0
+#define HAVE_MACHINE_SOUNDCARD_H 0
+
+#define SCOREDIR  "/var/games"
+#define SCOREFILE "ifrac.scores"
+
+#define CFONTDIR  "/usr/lib/kbd/consolefonts"
+#define CFONTFILE "default8x9"
+
+#undef ENABLE_WWSCORE
+
+#undef USE_BSD_RAND
+#undef USE_JOYSTICK
+#undef USE_JOYSTICK_EVENTS
+
+#undef USE_BACKGROUND_MUSIC
+#undef USE_VOLUME_CONTROL
+
+#undef USE_XDGA
+#undef USE_MOUSE
+
+#undef const
+#undef size_t
+
+#endif
+

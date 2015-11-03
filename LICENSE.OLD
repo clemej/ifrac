@@ -1,0 +1,56 @@
+
+This is the original IFRAC license applied to releases 1.0.0 and 1.1.0.
+IT IS NO LONGER EFFECTIVE and retained here in order to satisfy your
+curiosity.  04-Dec-2000.
+
+----------------------------------------------------------------------
+
+1. DISTRIBUTION POLICY.
+Intelligent FRAC (referred bellow as IFRAC or 'the application')  is a
+free open source application.  It was created for the benefit of Linux
+community.  IFRAC  can be supplied with a commercial package, where it
+is obviously not one of the major applications and no fees are charged
+for local support, local  warranty or anything apart from  the cost of
+media and distribution.In particular, IFRAC can appear as a part of an
+installation package for a free operating system, i.e. a  package that
+allows to install an operating system and all components necessary  to
+run it. 
+
+2. NO COMMERCIAL USE
+Any  commercial  use  of IFRAC, other than  specified  in the previous
+paragraph is prohibited.
+
+3. MODIFICATIONS.
+This license entitles to:
+
+- modify any part of the application for local use;
+
+- create a new  application  package (RPM, debian, etc) including,  if
+  necessary, an additional document referring to the package, provided
+  the original content is included completely and unmodified.
+
+Other  changes  should  be  approved  by the author before the modified
+package can be distributed.  This includes (but not limited to) porting
+the application to another operating system,  where substantial changes
+are required.
+
+4. USING THE CODE.
+A reference is expected, if a  considerable part of the source code is
+used in another application. No part of the source  code  can  be used
+in a commercial application.
+
+4. NO WARRANTY
+IFRAC is distributed in hope it will be useful.It was designed and has
+been extensively  tested  again malfunctioning or any potential damage
+to its user. However, as a free application,  IFRAC is distributed 'as
+is' without  a warranty of any kind.The author disclaims any liability
+for the consequences  arising  out of  the use or inability to use the
+application.
+
+=====================================================================
+
+P.S. That was a result of my awkward attempt to create something that
+to sounds more logical to me, than a well know GPL. Awaiting your
+comments.
+
+

@@ -1,0 +1,101 @@
+Version 1.4.0 (17-Nov-03)
+----------------------------------
+- Added mouse support (only buttons and wheels are operational)
+- Fixed bugs
+
+Version 1.3.2 (03-Jun-2001) 380.1K 
+----------------------------------
+- Added support for RPM 3+, fixed configure.in, relocated frac
+  page back to http://ifrac.tripod.com (1.3.2h - Apr 2003) 
+- Replaced '$' by '*' in submission code due to some html-related
+  problems (reported by Sebastian Schnellbacher 1.3.2g - Apr 2002). 
+- Fixed a problem with Alt+F2 in console mode (1.3.2f - Jan 2002)
+- Got it RedHat 7.1 compatible (location of console fonts - 1.3.2f). 
+- Change the behaviour of diagonal keys: if fails -
+  try sideaise and then forward/backward.
+  Suggested by Ken Nelson.
+- Added XSync after reverting to original mode (some
+  video drivers need that).
+- Choice of graphic memory access (vga_drawscansegment),
+  direct memory (banked or linear) for svgalib version.
+  Added -dva parameter to select video access mode.
+- Fixed compilation problems for MacOS compiler (thanks
+  to Bill Zachary).
+
+Version 1.3.1 (29-Apr-2001) 378.8K 
+----------------------------------
+- Changed limits for high score to 3000
+  and size of table to 30
+- Fixed a probelm with XF86DGA for some cards
+
+Version 1.3.0 (24-Mar-2001) 380.0K
+----------------------------------
+- World Wide high score table. New configuration
+  option "--with-wwscore".
+- Using "internal" randomizer. New configuration
+  option "--with-lrand".
+- Change scoring: added bonus for clearing several
+  layers at once.
+- Make block colours compatible with original version.
+- Changed "boss mode" for X. The suspended instance
+  is automatically recovered, unless -nores is coded.
+- Fixed numerous bugs.
+
+
+Version 1.2.1 (24-Dec-2000) 368.1K
+----------------------------------
+- Relocated page and email to geocities (1.2.1a).
+- Securing 'suid root' with svgalib. 
+  'auto' mode for --with-suidroot.
+
+Version 1.2.0 (17-Dec-2000) 367.8K
+----------------------------------
+- Introduced XFree86-DGA 2.0 support (-dga and -dnz 
+  'xifrac' options).   Removed difrac as a rudiment.
+  Adapted manuals.
+- Cleaned configuration script. 
+
+Version 1.1.2 (16-Dec-2000) 365.8K
+----------------------------------
+- Added board rotation.
+- Fixed bugs, rewrote section 'Using XF86DGA extensions'
+  which was accidentally lost while preparing 1.1.0,
+  and cleaned mess in the manual.
+- Cleaned configuration script.
+
+Version 1.1.1 (03-Dec-2000) 362.4K
+----------------------------------
+- Optimised drawing by storing a half-filled board.
+- Revised the structure of background play list: added
+  'ext' sections instead of 'apps', made options music
+  player-specific. Changed the use of defaults.
+  Introduced 'stop' option (resume music for the place
+  where it was stopped), documented 'pause' line and
+  added 'priority' line.
+- Reduced the size of package by finding a way to link
+  with libXxf86dga.a and libXxf86vm.a instead of keeping
+  their source codes.
+- Fixed some minor bugs in source and added difrac to RPM
+  binary package (sorry, I had to do that with 1.1.0).
+- Received a message from Per Bergland and happily
+  removed phrase "where are you, guys?" in introduction.
+- Started implementing support for xf86dga 2.0, as difrac
+  no longer works with some video drivers. Most probably
+  this will be the last version to support xf86dga 1.3
+  The interfaces are completely different, and I can't
+  longer provide backward compatibility.
+- New 'a la artistique' license.
+
+Version 1.1.0 (20-Oct-2000) 365.8K
+----------------------------------
+- High/true colour modes(15, 16 and 32bpp) with libvga.
+- Raw keyboard access mode with libvga.
+- New binary 'difrac' to use XF86DGA and XF86VidMode
+- Console font option for GUI versions. Included sample
+  console font for a non-Linux environment.
+- Tested with XFree86 3.4.1
+
+Version 1.0.0 (16-Sep-2000) 339.1K
+----------------------------------
+Original release.
+

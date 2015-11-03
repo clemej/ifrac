@@ -1,0 +1,315 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(ifr.h)
+AC_CONFIG_HEADER(ifr_autoconf.h)
+VERSION=`cat VERSION`
+
+dnl Arguments
+AC_ARG_WITH([scoredir],  [  --with-scoredir=DIR     directory for top scores file (/var/games)],, with_scoredir="/var/games")
+AC_ARG_WITH([scorefile], [  --with-scorefile=NAME   top scores file name (ifrac.scores)],, with_scorefile="ifrac.scores")
+AC_ARG_WITH([cfontdir],  [  --with-cfontdir=DIR     console font directory])
+AC_ARG_WITH([cfontfile], [  --with-cfontfile=NAME   console font filename ("default8x9")],,
+with_cfontfile="default8x9")
+AC_ARG_WITH([joystick],  [  --with-joystick=TYPE    yes (default), classic, no],,with_joystick=yes)
+AC_ARG_WITH([mouse],     [  --without-mouse         disable mouse support],,with_mouse=yes)
+AC_ARG_WITH([music],     [  --without-music         disable background music support],,with_music=yes)
+AC_ARG_WITH([volume],    [  --without-volume        disable volume and balance control],,with_volume=yes)
+AC_ARG_WITH([console],   [  --without-console       don't generate console version],,with_console=yes)
+AC_ARG_WITH([suidroot],  [  --with-suidroot={auto|yes|no}  whether 'suid root' console verion],,with_suidroot=yes)
+AC_ARG_WITH([x11],       [  --without-x11           don't generate X11 version],,with_x11=yes)
+AC_ARG_WITH([dga],       [  --with-dga=[yes|no]       XFreeDGA support (XF86DGA v2+ is required)],,with_dga=yes)
+AC_ARG_WITH([kbd],       [  --with-kbd=[raw|cooked] keyboard mode to use with svgalib],,with_kbd="raw")
+AC_ARG_WITH([mangz],     [  --with-mangz=[auto|yes|no]  use 'gzip' for man page],,with_mangz="auto")
+AC_ARG_WITH([docgz],     [  --with-docgz=[yes|no]     use 'gzip' for plain text docs],,with_docgz=yes)
+AC_ARG_WITH([batch],     [  --with-batch            reduced output, no questions],,with_batch=no)
+AC_ARG_WITH([lrand],     [  --with-lrand            use library randomizer],,with_lrand=no)
+AC_ARG_WITH([wwscore],   [  --with-wwscore          enable World-Wide score submission])
+
+
+AC_PROG_CC
+AC_PROG_GCC_TRADITIONAL
+
+if (test "${with_console}" != no) ; then
+	AC_CHECK_HEADERS(vga.h)
+	AC_CHECK_LIB(vga, vga_init)
+	if (test "${ac_cv_header_vga_h}" != yes) ||  \
+		 (test "${ac_cv_lib_vga_vga_init}" != yes)  ; then
+			AC_MSG_WARN("No libvga header file or library: console version is not generated!")
+			with_console=no
+	fi		
+fi
+
+if (test "${with_console}" != no)  && \
+   (test "${with_kbd}" = "raw") ; then
+	AC_CHECK_HEADERS(vgakeyboard.h)
+	AC_CHECK_LIB(vga, keyboard_init)
+	if (test "${ac_cv_header_vgakeyboard_h}" != yes) ||  \
+	   (test "${ac_cv_lib_vga_keyboard_init}" != yes)  ; then
+    AC_MSG_WARN("No raw keyboard support in libvga: 'cooked' mode will be used!")
+		with_kbd="cooked"
+	fi
+fi
+
+if (test "${with_console}" != no)  && \
+   (test "${with_suidroot}" = "auto") ; then
+	SVGA_SIUDROOT
+fi
+
+if test "${with_x11}" != no; then
+	AC_PATH_X
+	if test "${no_x}" = yes; then
+	  with_x11=no
+	fi
+fi	  
+
+
+if (test "${with_console}" != no)  && \
+   (test "${with_suidroot}" = "auto") ; then
+	 SVGALIB_SUIDROOT
+fi
+
+if (test "${with_x11}" != yes) && (test "${with_console}" != yes); then 
+	 AC_MSG_ERROR("No console or X version specified.Terminating")
+fi
+
+if (test "${with_x11}" = no)  && (test "${with_dga}" != no); then
+  AC_MSG_WARN([X11 support is needed for dga, --with-dga ignored])
+  with_dga=no
+fi  
+
+
+LIBS=""
+
+ac_includes_x11="
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+${ac_includes_default}"
+
+if (test "${with_dga}" != no); then
+   AC_CHECK_HEADERS(X11/extensions/xf86dga.h,,,${ac_includes_x11})
+   if test "${ac_cv_header_X11_extensions_Xxext_h}" = no; then
+  	 AC_MSG_WARN("No xf86dga header file: XF86DGA support not generated!")
+	 with_dga=no
+   fi
+fi 		
+
+LIBS=""
+
+if (test "${with_dga}" != no); then
+  dga_ver=0
+  AC_CHECK_LIB(Xxf86dga, XDGAQueryExtension,dga_ver=2,, -lX11  -lXext -L ${x_libraries} )
+  if (test ${dga_ver} -lt 2); then
+		AC_CHECK_LIB(Xxf86dga, XF86DGAQueryExtension,dga_ver=1,, -lX11 -lXext -L ${x_libraries} )
+  fi    
+
+  if test ${dga_ver} = 0; then
+		AC_MSG_WARN([No XF86DGA extension found.])
+		with_dga=no
+  fi
+  
+  if test ${dga_ver} = 1; then
+		AC_MSG_WARN([XF86DGA 2.0+ (XFree86 4.0) requred - see manual.])
+		with_dga=no
+  fi
+
+  if test ${with_dga} = no; then
+		AC_MSG_WARN([XF86DGA support is not generated!])
+  fi
+fi  
+
+LIBS=""
+
+dnl Test (and warn) for WW score submuission
+
+
+if test "${with_wwscore+set}" != set || \
+    test "${with_wwscore}" != yes; then
+   with_wwscore=${WWSCORE}
+fi	
+
+if (test "${with_wwscore}" = yes); then
+	AC_MSG_WARN("with_wwscore is provided for internal use only!")	
+	AC_DEFINE_UNQUOTED(ENABLE_WWSCORE, 1)
+else	
+   with_wwscore=no	
+fi
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl Checks for programs.
+
+AC_C_CONST
+AC_TYPE_MODE_T
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+AC_TYPE_UID_T
+AC_CHECK_SIZEOF(long long, 8)
+AC_CHECK_SIZEOF(long, 4)
+AC_CHECK_SIZEOF(int, 4)
+
+dnl Checks for library functions.
+AC_FUNC_MEMCMP
+AC_CHECK_FUNCS(gettimeofday time localtime clock)
+if test "$ac_cv_func_clock" != yes; then
+  AC_MSG_ERROR("No clock function found - terminated")
+fi
+
+if test "$ac_cv_func_gettimeofday" != yes && \
+   test "$ac_cv_func_time" != yes; then
+  AC_MSG_ERROR("No timer functions found - terminated")
+fi	
+
+if test "$ac_cv_func_localtime" != yes; then
+  AC_MSG_ERROR("No localtime function found - terminated")
+fi
+
+if (test "${with_lrand}" != yes); then
+  with_lrand="no"
+  AC_DEFINE_UNQUOTED(USE_BSD_RAND, 1)
+else	
+  AC_CHECK_FUNCS(srandom srand)
+  if test "$ac_cv_func_srandom" != yes && \
+	 test "$ac_cv_func_srand" != yes   ; then
+    AC_MSG_ERROR("No random functions found - terminated")
+  fi	
+
+  AC_CHECK_FUNCS(random rand)
+  if test "$ac_cv_func_random" != yes && \
+	 test "$ac_cv_func_rand" != yes   ; then
+    AC_MSG_ERROR("No random functions found - terminated")
+  fi	
+fi  
+
+AC_CHECK_FUNCS(strdup strspn strpbrk strcasecmp strncasecmp)
+
+if test "${with_cfontdir+set}" != set; then
+        AC_MSG_CHECKING(Looking for console font directory)
+        if test -d /usr/lib/kbd/consolefonts; then
+                with_cfontdir=/usr/lib/kbd/consolefonts
+        elif test -d /usr/lib/consolefonts; then
+                with_cfontdir=/usr/lib/consolefonts
+        elif test -d /lib/kbd/consolefonts; then
+                with_cfontdir=/lib/kbd/consolefonts
+        elif test -d /lib/consolefonts; then
+                with_cfontdir=/lib/consolefonts
+        else
+                with_cfontdir=$HOME
+        fi
+        AC_MSG_RESULT($with_cfontdir)
+fi
+
+AC_DEFINE_UNQUOTED(IFRAC_VERSION, 0x${VERSION})
+AC_SUBST(VERSION)
+AC_SUBST(with_scoredir)
+AC_SUBST(with_scorefile)
+AC_SUBST(with_cfontdir)
+AC_SUBST(with_cfontfile)
+AC_SUBST(with_suidroot)
+AC_SUBST(with_mangz)
+AC_SUBST(with_docgz)
+AC_SUBST(with_batch)
+AC_SUBST(datadir) 
+AC_DEFINE_UNQUOTED(SCOREDIR, "${with_scoredir}")
+AC_DEFINE_UNQUOTED(SCOREFILE, "${with_scorefile}")
+AC_DEFINE_UNQUOTED(CFONTDIR, "${with_cfontdir}")
+AC_DEFINE_UNQUOTED(CFONTFILE, "${with_cfontfile}")
+
+if test "${with_dga}" = yes; then
+AC_DEFINE(USE_XDGA, 1)
+fi  
+
+if test "${with_mouse}" = yes; then
+AC_DEFINE(USE_MOUSE, 1)
+fi  
+
+AC_SUBST(with_console)
+AC_SUBST(with_kbd)
+AC_SUBST(with_x11)
+AC_SUBST(with_dga)
+AC_SUBST(with_vm)
+AC_SUBST(with_lrand)
+AC_SUBST(with_wwscore)
+AC_SUBST(x_libraries)
+AC_SUBST(x_includes)
+
+
+if (test "${with_joystick}" != no);  then
+	AC_CHECK_HEADERS(linux/joystick.h)
+	if (test "${ac_cv_header_linux_joystick_h}" != yes); then
+		AC_MSG_WARN("No joystick header found: joystick support is excluded!")
+		with_joystick=no
+	else
+   	AC_DEFINE(USE_JOYSTICK,  1) 
+    if (test "${with_joystick}" = yes); then
+		   AC_DEFINE( USE_JOYSTICK_EVENTS, 1) 
+		fi
+	fi
+fi
+
+
+if (test "${with_music}" = yes); then
+	AC_DEFINE(USE_BACKGROUND_MUSIC, 1)
+fi
+
+if (test "${with_volume}" = yes); then
+	AC_CHECK_HEADERS(linux/soundcard.h sys/soundcard.h machine/soundcard.h)
+	if (test "${ac_cv_header_linux_soundcard_h}" = no) && \
+	   (test "${ac_cv_header_sys_soundcard_h}" = no) && \
+	   (test "${ac_cv_header_machine_soundcard_h}" = no); then
+		AC_MSG_WARN("soundcard.h is missing. DSP and mixer support are disabled.")
+		with_volume=no;
+	fi
+fi
+
+if (test "${with_volume}" = yes); then
+	AC_DEFINE(USE_VOLUME_CONTROL, 1)
+fi
+
+dnl Checks for header files.
+AC_HEADER_STDC
+
+AC_CHECK_HEADERS(fcntl.h sys/ioctl.h sys/time.h unistd.h)
+AC_CHECK_HEADERS(sys/kd.h linux/kd.h)
+AC_CHECK_HEADERS(limits.h values.h dirent.h)
+
+AC_PROG_INSTALL
+AC_SUBST(INSTALL)
+
+
+AC_OUTPUT(Makefile)
+
+if (test "${with_batch}" = no); then
+  echo ""
+  echo ""
+  echo "IFRAC configuration settings:"
+  echo "-----------------------------"
+  echo  "Compiler:                 ${CC} ${CFLAGS}"
+  echo  "Prefix:                   ${prefix}"
+  echo  "Installation routine:     ${INSTALL}"
+  echo  "Compile console version:  ${with_console}"
+  if (test "${with_console}" = yes); then
+    echo  "Keyboard access:          ${with_kbd}"
+    echo  "suid root for libvga:     ${with_suidroot}"
+  fi
+  echo  "Compile X version:        ${with_x11}"
+  if (test "${with_x11}" = yes); then
+    echo  "X headers:                ${x_includes}"
+    echo  "X libraries:              ${x_libraries}"
+    echo  "XF86DGA support:          ${with_dga}"
+  fi
+  echo  "Score file directory:     ${with_scoredir}"
+  echo  "Score file name:          ${with_scorefile}"
+  echo  "Console font directory:   ${with_cfontdir}"
+  echo  "Console font file name:   ${with_cfontfile}"
+  echo  "Joystick support:         ${with_joystick}"
+  echo  "Mouse support:            ${with_mouse}"
+  echo  "Background music:         ${with_music}"
+  echo  "Volume and balance:       ${with_volume}"
+  echo  "Use library randomizer:   ${with_lrand}"
+  echo  "WW score submission:      ${with_wwscore}"
+  echo  "gzip for manual:          ${with_mangz}"
+  echo  "gzip for text docs:       ${with_docgz}"
+  echo  ""
+  echo  "Type 'make' to compile the binaries"
+fi
+
